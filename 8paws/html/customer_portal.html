@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8Paws Pet Boutique & Grooming Salon - Customer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="text-2xl">🐕</div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">8Paws Pet Boutique</h1>
+                        <p class="text-sm text-primary">& Grooming Salon - Customer Portal</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#" onclick="showSection('tracking')" class="nav-link text-primary font-bold transition-colors">Track Pet</a>
+                    <a href="#" onclick="showSection('history')" class="nav-link text-gray-700 hover:text-primary transition-colors font-medium">History</a>
+                    <a href="#" onclick="showSection('appointment')" class="nav-link text-gray-700 hover:text-primary transition-colors font-medium">Book Appointment</a>
+                    <a href="#" onclick="showSection('profile')" class="nav-link text-gray-700 hover:text-primary transition-colors font-medium">Profile</a>
+                </nav>
+
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobileMenu" class="md:hidden hidden pb-4">
+                <div class="flex flex-col space-y-2">
+                    <a href="#" onclick="showSection('tracking')" class="text-gray-700 hover:text-primary py-2">Track Pet</a>
+                    <a href="#" onclick="showSection('history')" class="text-gray-700 hover:text-primary py-2">History</a>
+                    <a href="#" onclick="showSection('appointment')" class="text-gray-700 hover:text-primary py-2">Book Appointment</a>
+                    <a href="#" onclick="showSection('profile')" class="text-gray-700 hover:text-primary py-2">Profile</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="bg-gradient-to-r from-primary to-secondary rounded-xl p-6 text-white mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">Welcome to 8Paws! 👋</h2>
+                    <p class="text-blue-100">Track your pet's grooming progress and manage appointments</p>
+                </div>
+                <div class="hidden sm:block">
+                    <div class="text-right">
+                        <p class="text-blue-100">Active Bookings</p>
+                        <p class="text-xl font-semibold" id="activeBookingsCount">Loading...</p>
+                        <p class="text-sm text-blue-200">Real-time tracking available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <button onclick="showSection('tracking')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                <div class="text-3xl mb-3">📡</div>
+                <h3 class="font-semibold text-gray-900">Track Pet</h3>
+                <p class="text-sm text-gray-600 mt-1">Real-time RFID tracking</p>
+            </button>
+            <button onclick="showSection('appointment')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                <div class="text-3xl mb-3">📅</div>
+                <h3 class="font-semibold text-gray-900">Book Appointment</h3>
+                <p class="text-sm text-gray-600 mt-1">Schedule service</p>
+            </button>
+            <button onclick="showSection('history')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                <div class="text-3xl mb-3">📋</div>
+                <h3 class="font-semibold text-gray-900">Service History</h3>
+                <p class="text-sm text-gray-600 mt-1">Past appointments</p>
+            </button>
+            <button onclick="showSection('profile')" class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow text-center">
+                <div class="text-3xl mb-3">👤</div>
+                <h3 class="font-semibold text-gray-900">My Profile</h3>
+                <p class="text-sm text-gray-600 mt-1">Account settings</p>
+            </button>
+        </div>
+
+        <!-- Pet Tracking Section -->
+        <section id="tracking" class="section">
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">📡 Track Your Pet</h2>
+                
+                <!-- RFID Input -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Enter RFID Tag ID</label>
+                            <input type="text" id="rfidInput" placeholder="e.g., A1B2C3D4" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <button onclick="trackPet()" class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                            Track Pet
+                        </button>
+                    </div>
+                    <div class="mt-3 text-sm text-gray-600">
+                        <p>💡 Your RFID tag ID is provided when you check in your pet</p>
+                    </div>
+                </div>
+
+                <!-- Active Bookings -->
+                <div id="activeBookingsContainer">
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-4">🔍</div>
+                        <p class="text-gray-500">Loading active bookings...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service History Section -->
+        <section id="history" class="section hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">📋 Service History</h2>
+                    <div class="flex space-x-2">
+                        <button onclick="filterHistory('all')" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">All</button>
+                        <button onclick="filterHistory('month')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">This Month</button>
+                        <button onclick="filterHistory('year')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">This Year</button>
+                    </div>
+                </div>
+
+                <div id="historyContainer">
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-4">📄</div>
+                        <p class="text-gray-500">Loading service history...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Book Appointment Section -->
+        <section id="appointment" class="section hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">📅 Book New Appointment</h2>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <p class="text-yellow-800 text-sm">
+                        📝 <strong>Note:</strong> Online booking is coming soon! For now, please call us at <strong>(02) 8123-4567</strong> or visit our salon to book an appointment.
+                    </p>
+                </div>
+                
+                <form class="space-y-6 opacity-60 pointer-events-none">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Pet</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>Loading pets...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Date</label>
+                            <input type="date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Time</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>9:00 AM</option>
+                                <option>10:00 AM</option>
+                                <option>11:00 AM</option>
+                                <option>1:00 PM</option>
+                                <option>2:00 PM</option>
+                                <option>3:00 PM</option>
+                                <option>4:00 PM</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Staff (Optional)</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>No Preference</option>
+                                <option>Sarah Johnson (Senior Groomer)</option>
+                                <option>Mike Rivera (Bath Specialist)</option>
+                                <option>Lisa Chen (Junior Groomer)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Service Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-4">Select Services</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Basic Bath</span>
+                                        <span class="font-semibold">₱300</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Full Grooming Package</span>
+                                        <span class="font-semibold">₱600</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Nail Trimming</span>
+                                        <span class="font-semibold">₱150</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Ear Cleaning</span>
+                                        <span class="font-semibold">₱200</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Dental Care</span>
+                                        <span class="font-semibold">₱250</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>De-shedding Treatment</span>
+                                        <span class="font-semibold">₱400</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Nail Polish</span>
+                                        <span class="font-semibold">₱100</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-primary">
+                                    <span class="ml-3 flex-1 flex justify-between">
+                                        <span>Perfume & Bow</span>
+                                        <span class="font-semibold">₱150</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Special Instructions</label>
+                        <textarea rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Any special requests or notes for the groomer..."></textarea>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-6 border-t">
+                        <div>
+                            <p class="text-sm text-gray-600">Estimated Total: <span class="text-lg font-bold text-primary">₱0</span></p>
+                            <p class="text-xs text-gray-500">Final amount may vary based on pet size and condition</p>
+                        </div>
+                        <button type="submit" disabled class="bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-medium cursor-not-allowed">
+                            Coming Soon
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section hidden">
+            <div class="space-y-6">
+                <!-- Personal Information -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">👤 My Profile</h2>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <p class="text-blue-800 text-sm">
+                            📝 <strong>Note:</strong> Profile management is coming soon! For now, please contact us to update your information.
+                        </p>
+                    </div>
+                    
+                    <form class="space-y-6 opacity-60 pointer-events-none">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" value="Loading..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" value="Loading..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" value="Loading..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Emergency Contact</label>
+                                <input type="tel" value="Loading..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                            <textarea rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">Loading...</textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" disabled class="bg-gray-300 text-gray-500 px-6 py-3 rounded-lg font-medium cursor-not-allowed">
+                                Coming Soon
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="text-2xl">🐾</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">8Paws Pet Boutique</h3>
+                            <p class="text-sm text-gray-600">& Grooming Salon</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Caring for your beloved pets with professional grooming services and modern RFID technology.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4">Contact Info</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p>📍 123 Pet Street, Quezon City</p>
+                        <p>📞 (02) 8123-4567</p>
+                        <p>📧 info@8pawspetboutique.com</p>
+                        <p>🕐 Mon-Sat: 8AM-6PM</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-4">Quick Links</h4>
+                    <div class="space-y-2 text-sm">
+                        <a href="check_in.html" class="text-gray-600 hover:text-primary block">Check-in Pet</a>
+                        <a href="#" class="text-gray-600 hover:text-primary block">Service Pricing</a>
+                        <a href="#" class="text-gray-600 hover:text-primary block">Pet Care Tips</a>
+                        <a href="#" class="text-gray-600 hover:text-primary block">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t mt-8 pt-8 text-center text-sm text-gray-500">
+                <p>&copy; 2025 8Paws Pet Boutique & Grooming Salon. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // API base URL - adjust this to your server location
+        const API_BASE = 'http://localhost/8paws/api/';
+        
+        // Sample tracking data for demo (will be replaced with real API calls)
+        let trackingData = {};
+
+        // Navigation functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('text-primary', 'font-bold');
+                link.classList.add('text-gray-700');
+            });
+            
+            // Highlight active nav
+            event.target.classList.remove('text-gray-700');
+            event.target.classList.add('text-primary', 'font-bold');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Pet tracking function
+        async function trackPet() {
+            const rfidInput = document.getElementById('rfidInput');
+            const rfidValue = rfidInput.value.toUpperCase().trim();
+            
+            if (!rfidValue) {
+                showNotification('Please enter an RFID tag ID.', 'warning');
+                return;
+            }
+
+            try {
+                showNotification('Tracking pet...', 'info');
+                
+                const response = await fetch(`${API_BASE}tracking.php?rfid=${rfidValue}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const petInfo = result.data;
+                    showNotification(`Found ${petInfo.pet_name}! Status: ${petInfo.status}`, 'success');
+                    
+                    // Display detailed tracking info
+                    displayPetTrackingInfo(petInfo);
+                } else {
+                    showNotification('RFID tag not found or no active booking. Please check the ID and try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error tracking pet:', error);
+                showNotification('Error connecting to tracking system. Please try again.', 'error');
+            }
+            
+            rfidInput.value = '';
+        }
+
+        function displayPetTrackingInfo(petInfo) {
+            const container = document.getElementById('activeBookingsContainer');
+            const statusSteps = {
+                'checked-in': { step: 1, label: 'Checked In', color: 'green' },
+                'bathing': { step: 2, label: 'Bathing', color: 'yellow' },
+                'grooming': { step: 3, label: 'Grooming', color: 'yellow' },
+                'ready': { step: 4, label: 'Ready for Pickup', color: 'green' }
+            };
+            
+            const currentStatus = statusSteps[petInfo.status] || { step: 1, label: petInfo.status, color: 'gray' };
+            
+            container.innerHTML = `
+                <div class="border border-gray-200 rounded-xl p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl">🐾</div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">${petInfo.pet_name}</h3>
+                                <p class="text-sm text-gray-600">${petInfo.breed} • RFID: ${petInfo.tag_id}</p>
+                                <p class="text-xs text-gray-500">Owner: ${petInfo.owner_name}</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-${currentStatus.color}-100 text-${currentStatus.color}-800 rounded-full text-sm font-medium">
+                            ${currentStatus.label}
+                        </span>
+                    </div>
+                    
+                    <!-- Progress Timeline -->
+                    <div class="space-y-3 mb-4">
+                        ${generateTimelineSteps(petInfo.status, petInfo.status_history)}
+                    </div>
+
+                    <!-- Services -->
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-2">Services</h4>
+                        <div class="space-y-1">
+                            ${petInfo.services.map(service => `
+                                <div class="flex justify-between text-sm">
+                                    <span>${service.name}</span>
+                                    <span>₱${service.price}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="border-t mt-2 pt-2 flex justify-between font-semibold">
+                            <span>Total:</span>
+                            <span>₱${petInfo.total_amount}</span>
+                        </div>
+                    </div>
+
+                    <!-- Estimated Completion -->
+                    ${petInfo.estimated_completion ? `
+                        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-blue-700">Estimated Completion:</span>
+                                <span class="text-sm font-bold text-blue-900">${formatTime(petInfo.estimated_completion)}</span>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function generateTimelineSteps(currentStatus, statusHistory) {
+            const steps = [
+                { key: 'checked-in', name: 'Check-in Complete', icon: '✓' },
+                { key: 'bathing', name: 'Bathing', icon: '🛁' },
+                { key: 'grooming', name: 'Grooming', icon: '✂️' },
+                { key: 'ready', name: 'Ready for Pickup', icon: '✅' }
+            ];
+            
+            const statusOrder = ['checked-in', 'bathing', 'grooming', 'ready'];
+            const currentIndex = statusOrder.indexOf(currentStatus);
+            
+            return steps.map((step, index) => {
+                const isCompleted = index <= currentIndex;
+                const isCurrent = index === currentIndex;
+                const statusInfo = statusHistory.find(h => h.status === step.key);
+                
+                return `
+                    <div class="flex items-center">
+                        <div class="w-6 h-6 ${isCompleted ? 'bg-green-500' : isCurrent ? 'bg-yellow-500' : 'bg-gray-300'} rounded-full flex items-center justify-center mr-3">
+                            ${isCompleted ? 
+                                '<svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>' :
+                                isCurrent ? '<div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>' :
+                                '<div class="w-2 h-2 bg-gray-500 rounded-full"></div>'
+                            }
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium ${isCompleted ? 'text-gray-900' : 'text-gray-600'}">${step.name}</p>
+                            ${statusInfo ? `<p class="text-sm text-gray-600">${formatTime(statusInfo.created_at)}</p>` : 
+                             isCurrent ? '<p class="text-sm text-gray-600">In progress...</p>' :
+                             '<p class="text-sm text-gray-500">Pending</p>'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        // Load active bookings on page load
+        async function loadActiveBookings() {
+            try {
+                const response = await fetch(`${API_BASE}tracking.php`);
+                const result = await response.json();
+                
+                if (result.success && result.data.length > 0) {
+                    document.getElementById('activeBookingsCount').textContent = result.data.length;
+                    
+                    // If there's an RFID from localStorage (coming from check-in), auto-track it
+                    const storedRFID = localStorage.getItem('currentRFID');
+                    if (storedRFID) {
+                        document.getElementById('rfidInput').value = storedRFID;
+                        trackPet();
+                        localStorage.removeItem('currentRFID');
+                    } else {
+                        // Show all active bookings
+                        displayAllActiveBookings(result.data);
+                    }
+                } else {
+                    document.getElementById('activeBookingsCount').textContent = '0';
+                    document.getElementById('activeBookingsContainer').innerHTML = `
+                        <div class="text-center py-8">
+                            <div class="text-4xl mb-4">🐾</div>
+                            <p class="text-gray-500">No active bookings found</p>
+                            <p class="text-sm text-gray-400 mt-2">Your pets will appear here when they're being groomed</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading active bookings:', error);
+                document.getElementById('activeBookingsContainer').innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-4">⚠️</div>
+                        <p class="text-red-500">Error loading bookings</p>
+                        <p class="text-sm text-gray-500 mt-2">Please refresh the page or try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayAllActiveBookings(bookings) {
+            const container = document.getElementById('activeBookingsContainer');
+            
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-4">🐾</div>
+                        <p class="text-gray-500">No active bookings</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    ${bookings.map(booking => `
+                        <div class="border border-gray-200 rounded-xl p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-xl">🐾</div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">${booking.pet_name}</h3>
+                                        <p class="text-sm text-gray-600">${booking.breed} • ${booking.tag_id}</p>
+                                        <p class="text-xs text-gray-500">${booking.owner_name}</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+                                    ${booking.status}
+                                </span>
+                            </div>
+                            <div class="text-center">
+                                <button onclick="trackSpecificPet('${booking.tag_id}')" 
+                                        class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function trackSpecificPet(rfidTag) {
+            document.getElementById('rfidInput').value = rfidTag;
+            await trackPet();
+        }
+
+        // History filter function
+        function filterHistory(period) {
+            // Update button styles
+            event.target.parentElement.querySelectorAll('button').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            event.target.classList.add('bg-primary', 'text-white');
+            
+            showNotification(`History filter: ${period} (Feature coming soon)`, 'info');
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 4000);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set tracking as default active section
+            showSection('tracking');
+            
+            // Load active bookings
+            loadActiveBookings();
+            
+            // Add event listener to RFID input for Enter key
+            document.getElementById('rfidInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    trackPet();
+                }
+            });
+            
+            // Auto-update every 30 seconds
+            setInterval(() => {
+                // Only auto-refresh if we're on tracking section and not showing specific pet details
+                if (!document.getElementById('tracking').classList.contains('hidden')) {
+                    const container = document.getElementById('activeBookingsContainer');
+                    if (container.innerHTML.includes('grid grid-cols-1 lg:grid-cols-2')) {
+                        loadActiveBookings();
+                    }
+                }
+            }, 30000);
+        });
+
+        // RFID Scanner Integration (for when you get the device)
+        function handleRFIDScan(tagId) {
+            // This function will be called when RFID device detects a tag
+            document.getElementById('rfidInput').value = tagId;
+            trackPet();
+        }
+    </script>
+</body>
+</html>
